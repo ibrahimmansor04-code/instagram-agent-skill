@@ -1,0 +1,8 @@
+# Lantern style. Arabic first, English under it, gold on the word that matters.
+# Original demo copy. Nothing here is a quotation. If you tell a hadith or ayah
+# in this style, paste the wording from your source and add --source.
+رجلٌ *يحفظ* أسرار المدينة || A man who *kept* the city's secrets, || night
+وكان الناس يأتونه *بأسرارهم* || and people brought him their *secrets*, || warm
+HOLD 0.8 black
+ولم يُخبِرْ بها *أحدًا* || and he told them to *no one*. || warm
+CARD: And so he was *known.* || وهكذا *عُرِف*.

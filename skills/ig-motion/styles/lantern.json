@@ -1,0 +1,76 @@
+{
+  "name": "lantern",
+  "label": "Lantern - the storyteller",
+  "note": "Warm, dark, illustrated. Arabic leads in a gold-lit naskh, English follows beneath in a classical serif. Built for stories, hadith narrations and reminders told as a scene.",
+  "canvas": {
+    "w": 1080,
+    "h": 1920
+  },
+  "reveal": "karaoke",
+  "default_scene": "night",
+  "palette": {
+    "text": "#fffaf5",
+    "dim": "rgba(255,250,245,0.36)",
+    "accent": "#f5d397",
+    "footer": "#fff0d8",
+    "glow": "#d9a441",
+    "warn": "#e8674f"
+  },
+  "type": {
+    "ar": {
+      "family": "'Amiri','Noto Naskh Arabic','Scheherazade New',serif",
+      "weight": 700,
+      "size": 70
+    },
+    "en": {
+      "family": "'Cormorant Garamond','Cormorant',Georgia,serif",
+      "weight": 600,
+      "size": 44
+    },
+    "caps": {
+      "family": "'Cinzel','Cormorant Garamond',Georgia,serif",
+      "weight": 500,
+      "size": 28,
+      "tracking": "0.08em"
+    }
+  },
+  "layout": {
+    "order": [
+      "ar",
+      "en"
+    ],
+    "text_top": 12.5,
+    "text_gap": 22,
+    "handle": {
+      "side": "right",
+      "top": 24.5
+    },
+    "source": {
+      "top": 66
+    },
+    "brand": {
+      "top": 72
+    }
+  },
+  "card": {
+    "big": "ar",
+    "bg": "#0b0a16",
+    "ink": "#f5d397",
+    "accent": "#fffaf5",
+    "font": "'Amiri','Noto Naskh Arabic',serif",
+    "weight": 700,
+    "size": 190,
+    "sub_size": 56,
+    "hide_footer": true
+  },
+  "pacing": {
+    "wps": 2.6,
+    "min_line": 1.4,
+    "gap": 0.15
+  },
+  "reference": "Measured from a 720x1280 reference reel: Arabic line at about 15% of frame height, English at about 20%, handle right-aligned at about 25%, source line at about 74%, brand lockup at about 81%. Roughly one line per 2 seconds. The reference puts the source line at about 74% and the brand at about 81%; both are moved up here so the Reels caption and audio strip (everything below y=1440 on a 1920 frame) never cover them.",
+  "hero": {
+    "top": 39,
+    "size": 176
+  }
+}

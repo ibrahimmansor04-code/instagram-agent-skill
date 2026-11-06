@@ -1,6 +1,6 @@
 # The Instagram agent skill
 
-Thirteen Claude skills that run an Instagram account. Free, MIT, no signup, no
+Fourteen Claude skills that run an Instagram account. Free, MIT, no signup, no
 API key, nothing to connect.
 
 One of them writes your Reels off 26 hook formulas and scores the hook before
@@ -52,7 +52,7 @@ reels and say "write my voice.md from these". Every skill reads that file. It
 matters more here than on other platforms, because you have to say the words
 out loud.
 
-## The thirteen
+## The fourteen
 
 | command | what it does |
 | --- | --- |
@@ -60,6 +60,7 @@ out loud.
 | `/ig-viral` | Goes and finds what is working in your niche, ranks it by multiple over each account's own median, names the formula, writes the swipe file. |
 | `/ig-caption` | The caption, linted. Shows you the 125 characters the feed actually shows before the tap. |
 | `/ig-carousel` | Swipe posts. The cover that earns the swipe, slide copy, and the 1080x1350 files. |
+| `/ig-motion` | Faceless animated Reels in Arabic and English. Two house styles (Lantern, Thread), a timed storyboard, and an HTML player you can screen-record. |
 | `/ig-story` | The daily story sequence, which sticker does which job, and the DM funnel that starts with them moving first. |
 | `/ig-profile` | Scores your profile against a [12-part rubric](skills/ig-profile/rubric.json) out of 100, then rewrites in fix-first order. |
 | `/ig-plan` | The week. What to post, which format, when, and the 10 accounts to engage with. |
@@ -70,7 +71,7 @@ out loud.
 | `/ig-repurpose` | One video, podcast or newsletter into a week of reels and carousels that each stand alone. |
 | `/ig-audit` | Post-mortem on what you already posted. Ranks by outlier multiple and sends per reach, not views. |
 
-## The five tools that actually run
+## The six tools that actually run
 
 No dependencies, no network, nothing uploaded. They run on your machine, on
 your text.
@@ -149,6 +150,32 @@ this prints is that window, as a box, the way a scrolling stranger reads it:
 
 It enforces the current hashtag cap, which is **five per post**, not thirty.
 Instagram cut it on 18 December 2025.
+
+### The motion Reel
+
+```bash
+python3 storyboard.py lines.txt --style thread --handle @you --target 15
+python3 storyboard.py lines.txt --style lantern --brand "Your Brand" --html reel.html
+```
+
+One beat per line, either language first, the word that carries the line in
+`*asterisks*`. It times every beat, reveals the words one by one, and flags a
+hook past three seconds, more than two accents on a line, a background that
+sits still too long and a missing closing card. `--html` writes a
+self-contained player at 1080x1920. Press `g` in it to draw the Reels safe zones
+on the frame. `render.py reel.html --audio voice.m4a --out reel.mp4` renders it
+to a finished MP4 with your audio under it, frame-accurate. The two styles live in
+[`skills/ig-motion/styles/`](skills/ig-motion/styles) as plain JSON, so a third
+is one file.
+
+```
+STORYBOARD  -  thread  -  5 beats  -  9.4s (target 10.0s)  -  2.8 wps
+ 0:00.0  1.4s  ember          You told yourself *tomorrow,*
+                                قلتَ لنفسك: *غدًا،*
+ 0:06.2  2.4s  paper     CARD *TODAY.*
+                                اليوم.
+  Clean. Nothing flagged.
+```
 
 ### The humanizer
 

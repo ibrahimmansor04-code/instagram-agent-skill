@@ -1,0 +1,76 @@
+{
+  "name": "thread",
+  "label": "Thread - kinetic type and one figure",
+  "note": "Flat, dark, one idea at a time. English leads, Arabic sits under it, one amber word per line carries the meaning. A single small figure moves through the scenes. Ends on a typographic slam card. Built for short, hard-hitting questions and reminders.",
+  "canvas": {
+    "w": 1080,
+    "h": 1920
+  },
+  "reveal": "pop",
+  "default_scene": "ember",
+  "palette": {
+    "text": "#fff4fa",
+    "dim": "rgba(255,244,250,0.30)",
+    "accent": "#e1ac64",
+    "footer": "#fff4fa",
+    "glow": "#e1ac64",
+    "warn": "#e8674f"
+  },
+  "type": {
+    "en": {
+      "family": "'Manrope','Plus Jakarta Sans','Helvetica Neue',Arial,sans-serif",
+      "weight": 700,
+      "size": 52
+    },
+    "ar": {
+      "family": "'Cairo','Tajawal','Noto Sans Arabic',sans-serif",
+      "weight": 700,
+      "size": 46
+    },
+    "caps": {
+      "family": "'Manrope','Helvetica Neue',Arial,sans-serif",
+      "weight": 700,
+      "size": 26,
+      "tracking": "0.04em"
+    }
+  },
+  "layout": {
+    "order": [
+      "en",
+      "ar"
+    ],
+    "text_top": 24.5,
+    "text_gap": 70,
+    "handle": {
+      "side": "left",
+      "top": 60.5
+    },
+    "source": {
+      "top": 66
+    },
+    "brand": {
+      "top": 72
+    }
+  },
+  "card": {
+    "big": "en",
+    "bg": "#efe6d8",
+    "ink": "#1c1714",
+    "accent": "#b54528",
+    "font": "'Manrope','Helvetica Neue',Arial,sans-serif",
+    "weight": 800,
+    "size": 270,
+    "sub_size": 112,
+    "hide_footer": true
+  },
+  "pacing": {
+    "wps": 2.8,
+    "min_line": 1.2,
+    "gap": 0.12
+  },
+  "reference": "Measured from a 720x1280 reference reel: English line at about 26% of frame height, Arabic at about 35%, handle left-aligned at about 61%, ground line at about 87%. Palette runs crimson (#491722 to #662630) into dusk blue (#252d4a to #6a425f), cream card #efe6d8 with brick red #b54528. The reference puts the source line at about 74% and the brand at about 81%; both are moved up here so the Reels caption and audio strip (everything below y=1440 on a 1920 frame) never cover them.",
+  "hero": {
+    "top": 43,
+    "size": 150
+  }
+}

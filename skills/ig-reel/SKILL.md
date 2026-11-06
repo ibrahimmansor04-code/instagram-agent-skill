@@ -124,6 +124,8 @@ Write it separately, every time. It is read before it is heard.
 - **Never fabricate.** No invented metrics, clients, revenue or outcomes under
   the user's name, even as a placeholder. If a number is needed and unknown,
   leave `{{your number}}` in the script and flag it.
+- **No face, no voice on camera?** That is a different build. Hand it to
+  `/ig-motion`, which makes animated text-over-scene Reels, Arabic and English.
 - **Do not write a script around a trending audio the user cannot use.** If the
   idea needs the user's own voice, say so.
 

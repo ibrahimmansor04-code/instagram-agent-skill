@@ -1,0 +1,7 @@
+# Thread style. English on top, Arabic under it, one amber word per line.
+# Original demo copy about putting things off. Replace with your own.
+You told yourself *tomorrow*, || قلتَ لنفسك: *غدًا*، || ember
+and tomorrow became a *year*. || وصار الغدُ *سنةً*. || ember
+HOLD 0.7 black
+So what are you *waiting* for? || فماذا *تنتظر*؟ || dusk
+CARD: *TODAY.* || اليوم.

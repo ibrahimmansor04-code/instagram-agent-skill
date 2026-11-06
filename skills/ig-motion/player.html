@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ig-motion player</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- Fonts load from Google Fonts when online. Offline, the stacks in the style file fall back to system fonts. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@600;700&family=Cinzel:wght@500&family=Cormorant+Garamond:wght@500;600&family=Manrope:wght@500;700;800&display=swap">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;transition:none!important}
+html,body{height:100%;background:#000;overflow:hidden}
+#stage{position:absolute;left:50%;top:50%;width:1080px;height:1920px;transform-origin:center center;overflow:hidden;color:var(--text);background:#000}
+
+/* backgrounds. Swap any of these for image:path or video:path in the lines file to use real art. */
+.bg{position:absolute;inset:0;opacity:0;background-size:cover;background-position:center}
+.bg.on{opacity:1}
+.bg video{width:100%;height:100%;object-fit:cover}
+.bg.night{background:
+  radial-gradient(3px 3px at 12% 14%,#fff9 50%,transparent 52%),radial-gradient(2px 2px at 31% 9%,#fff8 50%,transparent 52%),
+  radial-gradient(3px 3px at 58% 17%,#fff9 50%,transparent 52%),radial-gradient(2px 2px at 84% 11%,#fff8 50%,transparent 52%),
+  radial-gradient(2px 2px at 22% 33%,#fff7 50%,transparent 52%),radial-gradient(3px 3px at 71% 37%,#fff8 50%,transparent 52%),
+  radial-gradient(2px 2px at 91% 46%,#fff7 50%,transparent 52%),radial-gradient(2px 2px at 8% 52%,#fff6 50%,transparent 52%),
+  linear-gradient(#0b0a16 0%,#141a3a 55%,#252d4a 100%)}
+.bg.warm{background:radial-gradient(ellipse at 50% 55%,#7a5632 0%,#442e20 38%,#171213 100%)}
+.bg.parchment{background:linear-gradient(#e0cca1,#c8b187)}
+.bg.ember{background:radial-gradient(ellipse at 50% 72%,#8a2a38 0%,#491722 42%,#1b0a11 100%)}
+.bg.dusk{background:radial-gradient(circle at 80% 60%,#efe6d8 0 52px,rgba(239,230,216,.25) 54px 110px,transparent 112px),linear-gradient(#252d4a 0%,#3b4262 40%,#6a425f 76%,#a8574f 100%)}
+.bg.black{background:#050507}
+.bg.paper{background:#efe6d8}
+
+#dust{position:absolute;inset:0;pointer-events:none}
+#dust i{position:absolute;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent)}
+/* text */
+.beat{position:absolute;inset:0;pointer-events:none}
+.text{position:absolute;left:6%;right:6%;top:var(--text-top);display:flex;flex-direction:column;align-items:center;gap:var(--text-gap);text-align:center}
+.line{display:flex;flex-wrap:wrap;justify-content:center;gap:0 .3em}
+.ar{font-family:var(--ar-font);font-weight:var(--ar-weight);font-size:var(--ar-size);direction:rtl;line-height:1.55}
+.en{font-family:var(--en-font);font-weight:var(--en-weight);font-size:var(--en-size);line-height:1.3}
+.w{display:inline-block;transition:opacity .22s ease,transform .28s ease,color .22s ease}
+.w.glow{text-shadow:0 0 26px color-mix(in srgb,var(--accent) 55%,transparent)}
+.w.strike.struck{text-decoration:line-through;text-decoration-thickness:.07em}
+
+/* hero keyword: the accent word, big, when a beat has no second language */
+.hero{position:absolute;left:4%;right:4%;top:var(--hero-top);height:0}
+.hero .h{position:absolute;left:0;right:0;top:0;text-align:center;direction:rtl;line-height:1.25;font-family:var(--ar-font);font-weight:var(--ar-weight);font-size:var(--hero-size);display:none;white-space:nowrap}
+.hero .h b{font-weight:inherit;display:inline-block}
+.hero .h i{display:block;margin:20px auto 0;height:5px;width:62%;border-radius:3px;background:linear-gradient(90deg,transparent,currentColor,transparent);opacity:.9}
+.hero .h.strike b{text-decoration:line-through;text-decoration-thickness:.06em}
+/* closing card */
+.card{position:absolute;inset:0;background:var(--card-bg);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.card .big{display:flex;flex-direction:column;align-items:center;font-family:var(--card-font);font-weight:var(--card-weight);font-size:var(--card-size);line-height:.94;letter-spacing:-.02em;color:var(--card-ink);text-transform:uppercase}
+.card .big.ar-big{font-family:var(--ar-font);text-transform:none;letter-spacing:0;direction:rtl;line-height:1.3;flex-direction:row;flex-wrap:wrap;justify-content:center;gap:0 .3em;padding:0 7%}
+
+.card .big .w{color:var(--card-ink)}
+.card .big .w.accent{color:var(--card-accent)}
+.card .sub{margin-top:56px;font-size:var(--card-sub);color:var(--card-ink);display:flex;gap:.3em;justify-content:center}
+.card .sub.ar-sub{font-family:var(--ar-font);direction:rtl}
+.card .sub.en-sub{font-family:var(--en-font)}
+
+/* furniture */
+.furn{position:absolute;z-index:5;transition:opacity .3s ease,color .3s ease}
+#handle{top:var(--handle-top);display:flex;flex-direction:column;gap:14px;color:var(--footer);font-family:var(--caps-font);font-weight:var(--caps-weight);font-size:var(--caps-size);letter-spacing:.02em;text-transform:uppercase}
+#handle.right{right:7%;align-items:flex-end}
+#handle.left{left:7%;align-items:flex-start}
+#handle svg{width:50px;height:50px}
+#source{top:var(--source-top);left:8%;right:8%;text-align:center;color:var(--footer);font-family:var(--caps-font);font-weight:var(--caps-weight);font-size:var(--caps-size);letter-spacing:var(--caps-tracking);text-transform:uppercase;line-height:1.45;text-shadow:0 2px 14px #000a}
+#brand{top:var(--brand-top);left:0;right:0;text-align:center;color:var(--footer);font-family:var(--caps-font);font-weight:var(--caps-weight);font-size:calc(var(--caps-size) * .85);letter-spacing:.18em;text-transform:uppercase;opacity:.9}
+#brand:before{content:"\25C6";display:block;font-size:.9em;margin-bottom:10px;color:var(--accent)}
+.incard #handle{color:var(--card-ink);opacity:.35}
+.incard.hide-footer #source,.incard.hide-footer #brand{opacity:0}
+
+/* Reels UI safe zones. Press g. */
+#zones{position:absolute;inset:0;z-index:9;pointer-events:none;display:none}
+#zones i{position:absolute;background:rgba(255,40,80,.16);border:2px dashed rgba(255,80,110,.8)}
+#zones i:nth-child(1){left:0;right:0;bottom:0;height:25%}
+#zones i:nth-child(2){right:0;top:45%;bottom:25%;width:13%}
+#zones i:nth-child(3){left:0;right:0;top:0;height:12%}
+body.zones #zones{display:block}
+#hud{position:fixed;left:10px;top:8px;z-index:20;font:12px/1.4 system-ui,sans-serif;color:#fff9;pointer-events:none}
+body.record #hud{display:none}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="dust"></div>
+  <div id="beats"></div>
+  <div id="handle" class="furn"></div>
+  <div id="source" class="furn"></div>
+  <div id="brand" class="furn"></div>
+  <div id="zones"><i></i><i></i><i></i></div>
+</div>
+<div id="hud"></div>
+<script>
+window.STORYBOARD = null/*__STORYBOARD__*/;
+(function(){
+  var D = window.STORYBOARD;
+  var hud = document.getElementById('hud');
+  if(!D){ hud.textContent = 'No storyboard embedded. Build this file with storyboard.py --html.'; return; }
+  var S = D.style, P = S.palette, T = S.type, L = S.layout, C = S.card;
+  var q = new URLSearchParams(location.search);
+  var stage = document.getElementById('stage');
+  if(q.get('record')) document.body.classList.add('record');
+
+  var vars = {
+    '--text':P.text,'--dim':P.dim,'--accent':P.accent,'--footer':P.footer,
+    '--ar-font':T.ar.family,'--ar-weight':T.ar.weight,'--ar-size':T.ar.size+'px',
+    '--en-font':T.en.family,'--en-weight':T.en.weight,'--en-size':T.en.size+'px',
+    '--caps-font':T.caps.family,'--caps-weight':T.caps.weight,'--caps-size':T.caps.size+'px','--caps-tracking':T.caps.tracking,
+    '--text-top':L.text_top+'%','--text-gap':L.text_gap+'px',
+    '--handle-top':L.handle.top+'%','--source-top':L.source.top+'%','--brand-top':L.brand.top+'%',
+    '--hero-top':((S.hero||{}).top||36)+'%','--hero-size':((S.hero||{}).size||160)+'px','--card-bg':C.bg,'--card-ink':C.ink,'--card-accent':C.accent,'--card-font':C.font,
+    '--card-weight':C.weight,'--card-size':C.size+'px','--card-sub':C.sub_size+'px'
+  };
+  Object.keys(vars).forEach(function(k){ stage.style.setProperty(k, vars[k]); });
+  if(C.hide_footer) stage.classList.add('hide-footer');
+
+  function fit(){ var s = Math.min(innerWidth/1080, innerHeight/1920);
+    stage.style.transform = 'translate(-50%,-50%) scale('+s+')'; }
+  addEventListener('resize', fit); fit();
+
+  // furniture
+  var ig = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1" fill="currentColor" stroke="none"/></svg>';
+  var handle = document.getElementById('handle');
+  handle.className = 'furn ' + L.handle.side;
+  handle.innerHTML = ig + '<span></span>';
+  handle.querySelector('span').textContent = D.handle;
+  if(!D.handle) handle.style.display = 'none';
+  var src = document.getElementById('source'); src.textContent = D.source || '';
+  if(/[\u0600-\u06FF]/.test(D.source || '')){ src.style.letterSpacing = '0'; src.style.fontFamily = T.ar.family; src.style.fontWeight = 400; }
+  var brand = document.getElementById('brand'); brand.textContent = D.brand || ''; if(!D.brand) brand.style.display = 'none';
+
+  // backgrounds
+  var bgs = {};
+  var beatsEl = document.getElementById('beats');
+  D.beats.forEach(function(b){
+    if(bgs[b.scene]) return;
+    var el = document.createElement('div'); el.className = 'bg';
+    var m = /^(image|video):(.+)$/.exec(b.scene);
+    if(m && m[1]==='image') el.style.backgroundImage = 'url("'+m[2]+'")';
+    else if(m){ var v = document.createElement('video'); v.src = m[2]; v.muted = true; v.loop = true; v.playsInline = true; el.appendChild(v); el._v = v; }
+    else el.className += ' ' + b.scene;
+    stage.insertBefore(el, beatsEl); bgs[b.scene] = el;
+  });
+
+  // dust: slow motes drifting up, so a still sentence is never a still frame
+  var dust = [], dustEl = document.getElementById('dust');
+  (function(){ var r = 7; function rnd(){ r = (r * 16807) % 2147483647; return r / 2147483647; }
+    for(var k=0;k<26;k++){ var e = document.createElement('i'), z = 3 + rnd()*5; e.style.width = e.style.height = z + 'px';
+      dustEl.appendChild(e); dust.push({e:e, x:rnd()*1080, y:rnd()*1920, v:14 + rnd()*26, ph:rnd()*6.28, a:.15 + rnd()*.3}); } })();
+
+  // beats
+  function words(list, cls){
+    var line = document.createElement('div'); line.className = 'line ' + cls;
+    list.forEach(function(w){ var s = document.createElement('span'); s.className = 'w' + (w.strike ? ' strike' : ''); s.textContent = w.w; s._t = w.t; s._accent = !!w.accent; s._strike = !!w.strike; line.appendChild(s); });
+    return line;
+  }
+  var els = D.beats.map(function(b){
+    var el = document.createElement('div'); el.className = 'beat ' + S.reveal;
+    if(b.kind === 'line'){
+      var box = document.createElement('div'); box.className = 'text';
+      L.order.forEach(function(k){ if(b[k].length) box.appendChild(words(b[k], k)); });
+      el.appendChild(box);
+      if(S.hero && !b.en.length && b.hero && b.hero.length){
+        var hz = document.createElement('div'); hz.className = 'hero';
+        b.hero.forEach(function(it){
+          var h = document.createElement('div'); h.className = 'h ' + it.kind; h._t = it.t;
+          var bb = document.createElement('b'); bb.textContent = it.w; h.appendChild(bb);
+          h.appendChild(document.createElement('i'));
+          h.style.color = it.kind === 'accent' ? P.accent : (P.warn || '#e8674f');
+          if(it.kind === 'accent') h.style.textShadow = '0 0 44px color-mix(in srgb,' + P.accent + ' 55%,transparent)';
+          hz.appendChild(h);
+        });
+        el.appendChild(hz);
+      }
+    } else if(b.kind === 'card'){
+      var c = document.createElement('div'); c.className = 'card pop';
+      var bigKey = C.big; if(!b[bigKey].length) bigKey = bigKey === 'ar' ? 'en' : 'ar'; var subKey = bigKey === 'ar' ? 'en' : 'ar';
+      var big = document.createElement('div'); big.className = 'big' + (bigKey==='ar' ? ' ar-big' : '');
+      b[bigKey].forEach(function(w){ var s = document.createElement('div'); s.className = 'w' + (w.accent?' accent':''); s.textContent = w.w; s._t = w.t; s._accent = !!w.accent; s._strike = !!w.strike; big.appendChild(s); });
+      c.appendChild(big);
+      if(b[subKey].length){ var sub = words(b[subKey], subKey); sub.className = 'line sub ' + subKey + '-sub pop'; sub.style.opacity = 1; c.appendChild(sub); }
+      el.appendChild(c);
+    }
+    beatsEl.appendChild(el); el._w = el.querySelectorAll('.text .w, .card .w'); el._h = el.querySelectorAll('.hero .h'); return el;
+  });
+
+  // shrink a card word that is wider than the frame
+  function fitCards(){
+    document.querySelectorAll('.card .big').forEach(function(big){
+      big.style.fontSize = '';
+      var size = parseFloat(getComputedStyle(big).fontSize), widest = 0;
+      big.querySelectorAll('.w').forEach(function(w){ widest = Math.max(widest, w.scrollWidth); });
+      var room = 1080 * 0.86;
+      if(!big.classList.contains('ar-big') && widest > room) big.style.fontSize = (size * room / widest) + 'px';
+    });
+  }
+  fitCards();
+  function fitHero(){
+    document.querySelectorAll('.hero .h').forEach(function(h){
+      h.style.fontSize = ''; h.style.display = 'block';
+      var size = parseFloat(getComputedStyle(h).fontSize), wd = h.firstChild.getBoundingClientRect().width / (parseFloat(stage.style.transform.replace(/.*scale\(([^)]*)\).*/,'$1')) || 1);
+      var room = 1080 * 0.88;
+      if(wd > room) h.style.fontSize = (size * room / wd) + 'px';
+      h.style.display = '';
+    });
+  }
+  fitHero();
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ fitCards(); fitHero(); });
+
+  // The page is a pure function of the clock t, so any frame can be rendered
+  // on its own: window.__seek(seconds) draws that moment. That is what render.py uses.
+  function clamp(x){ return x < 0 ? 0 : x > 1 ? 1 : x; }
+  function mix(a, b, p){ return 'color-mix(in srgb,' + b + ' ' + (p * 100).toFixed(1) + '%,' + a + ')'; }
+  var warn = P.warn || '#e8674f';
+  var audio = null;
+  if(D.audio){ audio = new Audio(D.audio); }
+  var t = 0, playing = false, last = 0;
+  function render(){
+    var active = -1;
+    for(var i=0;i<D.beats.length;i++){ if(t >= D.beats[i].t0) active = i; }
+    var b = D.beats[active];
+    var prevScene = active > 0 ? D.beats[active-1].scene : null;
+    var fade = b ? clamp((t - b.t0) / 0.5) : 1;
+    Object.keys(bgs).forEach(function(k){
+      var o = 0;
+      if(b && k === b.scene) o = (prevScene === b.scene) ? 1 : fade;
+      else if(k === prevScene) o = 1 - fade;
+      bgs[k].style.opacity = o;
+      if(bgs[k]._v){ if(o > 0 && playing) bgs[k]._v.play(); else bgs[k]._v.pause(); }
+    });
+    els.forEach(function(el, i){
+      var on = i === active;
+      el.style.display = on ? '' : 'none';
+      if(!on) return;
+      var isCard = b.kind === 'card';
+      el.style.opacity = clamp((t - b.t0) / (isCard ? 0.35 : 0.12));
+      el._w.forEach(function(w){
+        var p = clamp((t - w._t) / 0.22);
+        var target = w._strike ? warn : (w._accent ? P.accent : P.text);
+        if(S.reveal === 'pop' || isCard){
+          w.style.opacity = p;
+          w.style.transform = 'translateY(' + ((1 - p) * 16).toFixed(1) + 'px)';
+          if(!isCard) w.style.color = target;
+        } else {
+          w.style.opacity = 1;
+          w.style.color = mix(P.dim, target, p);
+        }
+        w.classList.toggle('glow', S.reveal === 'karaoke' && w._accent && p > 0.6);
+        w.classList.toggle('struck', !!w._strike && p > 0.6);
+      });
+    });
+    els.forEach(function(el, i){
+      if(i !== active || !el._h.length) return;
+      var cur = -1;
+      el._h.forEach(function(h, k){ if(t >= h._t) cur = k; });
+      el._h.forEach(function(h, k){
+        if(k !== cur){ h.style.display = 'none'; return; }
+        var p = clamp((t - h._t) / 0.25);
+        h.style.display = 'block'; h.style.opacity = p;
+        h.style.transform = 'translateY(-50%) scale(' + (0.94 + 0.06 * p).toFixed(3) + ')';
+      });
+    });
+    var inCard = !!b && b.kind === 'card';
+    dust.forEach(function(d){
+      var y = ((d.y - t * d.v) % 1920 + 1920) % 1920;
+      d.e.style.transform = 'translate(' + (d.x + Math.sin(t * .5 + d.ph) * 18).toFixed(1) + 'px,' + y.toFixed(1) + 'px)';
+      d.e.style.opacity = inCard ? 0 : (d.a * (0.6 + 0.4 * Math.sin(t * 1.3 + d.ph))).toFixed(3);
+    });
+    stage.classList.toggle('incard', inCard);
+    hud.textContent = t.toFixed(1) + ' / ' + D.duration.toFixed(1) + 's   space play/pause   r restart   g safe zones';
+  }
+  window.__seek = function(x){ t = x; playing = false; render(); };
+  window.__duration = D.duration;
+  function tick(now){
+    if(playing){ t += (now - last)/1000; if(t >= D.duration){ t = D.duration; playing = false; window.__done = true; document.title = 'done'; } }
+    last = now; render(); requestAnimationFrame(tick);
+  }
+  function play(){ if(t >= D.duration) t = 0; playing = true; last = performance.now(); if(audio){ audio.currentTime = t; audio.play(); } }
+  function pause(){ playing = false; if(audio) audio.pause(); }
+  addEventListener('keydown', function(e){
+    if(e.code === 'Space'){ e.preventDefault(); playing ? pause() : play(); }
+    if(e.key === 'r'){ t = 0; play(); }
+    if(e.key === 'g') document.body.classList.toggle('zones');
+  });
+  addEventListener('click', function(){ playing ? pause() : play(); });
+  if(q.get('zones')) document.body.classList.add('zones');
+  if(q.get('t') !== null){ t = parseFloat(q.get('t')) || 0; }
+  else if(q.get('record') || q.get('autoplay')){ setTimeout(play, 400); }
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
